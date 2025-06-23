@@ -1,12 +1,46 @@
 import express, { json } from 'express';
+import 'dotenv/config';
+
 import { importGasStations } from './import-service.js';
 const { pool } = await import('./database.js');
 import logger from '../utils/logger.js';
+import haversine from '../utils/haversine.js';
 
 const app = express();
 const port = 3000;
 
 app.use(json());
+
+
+// Test-Endpoint für Debugging
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    env: {
+      NODE_ENV: process.env.NODE_ENV,
+      DB_HOST: process.env.DB_HOST
+    }
+  });
+});
+
+// Database-Test Endpoint
+app.get('/db-test', async (req, res) => {
+  try {
+    const { pool } = await import('./database.js');
+    const result = await pool.query('SELECT NOW()');
+    res.json({ 
+      status: 'Database connected', 
+      time: result.rows[0].now 
+    });
+  } catch (error) {
+    console.error('Database test failed:', error);
+    res.status(500).json({ 
+      error: 'Database connection failed',
+      message: error.message 
+    });
+  }
+});
 
 // manually trigger with curl -X POST http://localhost:3000/import
 app.post('/import', async (req, res) => {
@@ -53,21 +87,7 @@ app.get('/gas-stations/nearby', async (req, res) => {
      * @returns {Promise<Array>} - List of nearby gas stations within the specified radius.
      * Alternative: Use PostGIS for more complex geospatial queries (tbd)
      */
-    const query = `
-      SELECT *, 
-        (6371 * acos(
-          cos(radians($1)) * cos(radians(latitude)) * 
-          cos(radians(longitude) - radians($2)) + 
-          sin(radians($1)) * sin(radians(latitude))
-        )) AS distance_km
-      FROM gas_stations
-      WHERE (6371 * acos(
-        cos(radians($1)) * cos(radians(latitude)) * 
-        cos(radians(longitude) - radians($2)) + 
-        sin(radians($1)) * sin(radians(latitude))
-      )) <= $3
-      ORDER BY distance_km;
-    `;
+    const query = haversine;
     
     const result = await pool.query(query, [lat, lng, radiusKm]);
     
