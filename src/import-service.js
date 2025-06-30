@@ -81,22 +81,43 @@ function transformFeatures(data) {
     throw new Error('Invalid data format: features array not found');
   }
   
-  return data.features.map(feature => {
-    const longitude = feature.longitude;
-    const latitude = feature.latitude;
+  logger.info(`Processing ${data.features.length} raw features`);
+  
+  return data.features.map((feature, index) => {
+    // Debug: Log first few features to understand structure
+    if (index < 3) {
+      logger.info(`Feature ${index}:`, JSON.stringify(feature, null, 2));
+    }
+    
+    // Koordinaten aus geometry.x und geometry.y extrahieren (NICHT feature.longitude/latitude)
+    const longitude = feature.geometry?.x;
+    const latitude = feature.geometry?.y;
 
-    return {
+    const transformed = {
       object_id: feature.attributes?.objectid,
       adresse: feature.attributes?.adresse || 'Adresse nicht verfügbar',
       longitude: longitude ? parseFloat(longitude) : null,
       latitude: latitude ? parseFloat(latitude) : null,
     };
-  }).filter(feature => {
-    return feature.object_id && 
+    
+    // Debug: Log transformation result for first few
+    if (index < 3) {
+      logger.info(`Transformed ${index}:`, transformed);
+    }
+    
+    return transformed;
+  }).filter((feature, index) => {
+    const isValid = feature.object_id && 
            feature.longitude !== null && 
            feature.latitude !== null &&
            !isNaN(feature.longitude) && 
            !isNaN(feature.latitude);
+           
+    if (!isValid && index < 10) {
+      logger.warn(`Filtered out feature ${index}:`, feature);
+    }
+    
+    return isValid;
   });
 }
 
