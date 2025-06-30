@@ -4,7 +4,8 @@ import 'dotenv/config';
 import { importGasStations } from './import-service.js';
 const { pool } = await import('./database.js');
 import logger from '../utils/logger.js';
-import haversine from '../utils/haversine.js';
+// import haversine from '../utils/haversine.js';
+import postgisQuery from '../utils/postgis.js';
 
 const app = express();
 const port = 3000;
@@ -77,17 +78,8 @@ app.get('/gas-stations/nearby', async (req, res) => {
     }
     
     const radiusKm = (radius || 1000) / 1000; // Default 1km
-    
-    /**
-     * Calculates the distance between two points on the Earth specified by latitude and longitude.
-     * Uses the Haversine formula to compute the distance in kilometers.
-     * @param {number} lat - Latitude of the reference point.
-     * @param {number} lng - Longitude of the reference point.
-     * @param {number} radiusKm - Radius in kilometers to search within.
-     * @returns {Promise<Array>} - List of nearby gas stations within the specified radius.
-     * Alternative: Use PostGIS for more complex geospatial queries (tbd)
-     */
-    const query = haversine;
+
+    const query = postgisQuery;
     
     const result = await pool.query(query, [lat, lng, radiusKm]);
     
@@ -98,6 +90,17 @@ app.get('/gas-stations/nearby', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+async function initializeServer() {
+  try {
+    logger.info('Starting initial data import...');
+    await importGasStations();
+    logger.info('Initial data import completed');
+  } catch (error) {
+    logger.error('Failed to import initial data:', error.message);
+  }
+}
+
+app.listen(port, async () => {
   logger.info(`Server running at http://localhost:${port}`);
+  await initializeServer();
 });
