@@ -2,7 +2,7 @@ import { pool } from './database.js';
 import fetch from 'node-fetch';
 import logger from '../utils/logger.js';
 
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 const CONFIG = {
   DATA_URL: 'https://geoportal.stadt-koeln.de/arcgis/rest/services/verkehr/gefahrgutstrecken/MapServer/0/query?where=objectid+is+not+null&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&distance=&units=esriSRUnit_Foot&relationParam=&outFields=*&returnGeometry=true&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=4326&havingClause=&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson',
@@ -52,7 +52,7 @@ async function saveFeaturesToDatabase(features) {
           feature.object_id,
           feature.adresse,
           feature.longitude,
-          feature.latitude
+          feature.latitude,
         ]);
         
         importedCount++;
@@ -125,7 +125,7 @@ async function validateDatabaseConnection() {
   try {
     const client = await pool.connect();
     
-    const postgisCheck = await client.query("SELECT PostGIS_Version()");
+    const postgisCheck = await client.query('SELECT PostGIS_Version()');
     logger.info('PostGIS Version:', postgisCheck.rows[0].postgis_version);
     
     const tableCheck = await client.query(`

@@ -20,8 +20,8 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     env: {
       NODE_ENV: process.env.NODE_ENV,
-      DB_HOST: process.env.DB_HOST
-    }
+      DB_HOST: process.env.DB_HOST,
+    },
   });
 });
 
@@ -32,13 +32,13 @@ app.get('/db-test', async (req, res) => {
     const result = await pool.query('SELECT NOW()');
     res.json({ 
       status: 'Database connected', 
-      time: result.rows[0].now 
+      time: result.rows[0].now, 
     });
   } catch (error) {
     console.error('Database test failed:', error);
     res.status(500).json({ 
       error: 'Database connection failed',
-      message: error.message 
+      message: error.message, 
     });
   }
 });

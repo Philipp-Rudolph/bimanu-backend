@@ -23,7 +23,7 @@ async function testEndpoints() {
         id: allStations[0].id,
         adresse: allStations[0].adresse,
         latitude: allStations[0].latitude,
-        longitude: allStations[0].longitude
+        longitude: allStations[0].longitude,
       });
     }
     
