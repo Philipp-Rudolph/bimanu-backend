@@ -39,32 +39,14 @@ A Node.js backend service for managing gas station data with geospatial function
    npm install
    ```
 
-2. **Set up environment variables:**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your database credentials
-   ```
+2. **Start PostgreSQL with PostGIS**
 
-3. **Start PostgreSQL with PostGIS**
-
-4. **Run the application:**
+3. **Run the application:**
    ```bash
    npm run dev
    ```
 
 ## 🔧 Configuration
-
-### Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DB_HOST` | `db` | Database host |
-| `DB_USER` | `postgres` | Database username |
-| `DB_PASSWORD` | `password` | Database password |
-| `DB_NAME` | `postgres` | Database name |
-| `DB_PORT` | `5432` | Database port |
-| `LOG_LEVEL` | `info` | Logging level (error, warn, info, debug) |
-| `NODE_ENV` | `development` | Node environment |
 
 ## 🌐 API Endpoints
 
@@ -293,10 +275,6 @@ docker run -p 3000:3000 bimanu-backend:latest
 3. Update documentation for API changes
 4. Use conventional commit messages
 
-## 📄 License
-
-This project is part of the Bimanu application suite.
-
 ---
 
 ## 🔧 Troubleshooting
@@ -317,13 +295,6 @@ This project is part of the Bimanu application suite.
 - Verify data was imported successfully
 - Check coordinate system (WGS84/EPSG:4326)
 - Ensure search radius is appropriate
-
-### Debug Mode
-
-Enable debug logging:
-```bash
-LOG_LEVEL=debug npm start
-```
 
 ### Health Checks
 
