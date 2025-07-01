@@ -13,7 +13,10 @@ const port = 3000;
 app.use(json());
 
 
-// Test-Endpoint für Debugging
+/**
+ * Health check endpoint for monitoring service status
+ * Returns server status, timestamp, and environment information
+ */
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'ok', 
@@ -25,7 +28,10 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Database-Test Endpoint
+/**
+ * Database connectivity test endpoint
+ * Verifies database connection and returns current timestamp
+ */
 app.get('/db-test', async (req, res) => {
   try {
     const { pool } = await import('./database.js');
@@ -43,20 +49,34 @@ app.get('/db-test', async (req, res) => {
   }
 });
 
-// manually trigger with curl -X POST http://localhost:3000/import
+/**
+ * Manual data import trigger endpoint
+ * Allows manual triggering of gas station data import
+ */
 app.post('/import', async (req, res) => {
   await importGasStations();
   res.json({ message: 'Import completed' });
 });
 
-// Schedule import every hour
+/**
+ * Schedule automatic data import every hour
+ * Ensures gas station data stays up-to-date
+ */
 global.setInterval(importGasStations, 60 * 60 * 1000);
 
+/**
+ * Root endpoint with service information
+ * Provides basic information about the service
+ */
 app.get('/', (req, res) => {
   res.send('Gas Station Import Service is running. Use `curl -X POST http://localhost:3000/import` to trigger an import.');
   res.status(200);
 });
 
+/**
+ * Get all gas stations endpoint
+ * Returns all gas stations stored in the database
+ */
 app.get('/gas-stations', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM gas_stations');
@@ -67,8 +87,14 @@ app.get('/gas-stations', async (req, res) => {
   }
 });
 
-// Endpoint to find nearby gas stations using Haversine formula
-// Example: curl -X GET "http://localhost:3000/gas-stations/nearby?lat=50.9413&lng=6.9583&radius=2000"
+/**
+ * Find nearby gas stations using PostGIS geospatial queries
+ * @param {number} lat - Latitude coordinate (required)
+ * @param {number} lng - Longitude coordinate (required)  
+ * @param {number} radius - Search radius in meters (optional, default: 1000)
+ * @returns {Array} Array of nearby gas stations with distance
+ * @example GET /gas-stations/nearby?lat=50.9413&lng=6.9583&radius=2000
+ */
 app.get('/gas-stations/nearby', async (req, res) => {
   try {
     const { lat, lng, radius } = req.query;
@@ -90,6 +116,10 @@ app.get('/gas-stations/nearby', async (req, res) => {
   }
 });
 
+/**
+ * Initialize server with initial data import
+ * Runs gas station data import on server startup to ensure database is populated
+ */
 async function initializeServer() {
   try {
     logger.info('Starting initial data import...');
