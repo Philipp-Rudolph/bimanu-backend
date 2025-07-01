@@ -268,13 +268,6 @@ docker run -p 3000:3000 bimanu-backend:latest
 3. Ensure network connectivity to external data source
 4. Set up monitoring and logging (optional)
 
-## 🤝 Contributing
-
-1. Follow the existing code style (ESLint configuration)
-2. Write tests for new functionality
-3. Update documentation for API changes
-4. Use conventional commit messages
-
 ---
 
 ## 🔧 Troubleshooting
