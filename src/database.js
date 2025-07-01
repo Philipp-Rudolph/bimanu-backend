@@ -1,5 +1,9 @@
 import { Pool } from 'pg';
 
+/**
+ * PostgreSQL connection pool configuration
+ * Uses environment variables with fallback defaults for Docker setup
+ */
 const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || 'db',
