@@ -19,32 +19,12 @@ A Node.js backend service for managing gas station data with geospatial function
 
 ## 🛠️ Installation & Setup
 
-### Option 1: Docker Compose (Recommended)
-
-1. **Start the services:**
-   ```bash
-   docker compose up -d
-   ```
-
-2. **The backend will automatically:**
-   - Start the PostgreSQL database with PostGIS
-   - Initialize the database schema
-   - Import initial gas station data
-   - Start the web server on port 3000
-
-### Option 2: Local Development
-
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-2. **Start PostgreSQL with PostGIS**
-
-3. **Run the application:**
-   ```bash
-   npm run dev
-   ```
+Use the bimanu docker wrapper repository to run the application, including: 
+- **PostgreSQL**: Database for storing gas station data
+- **PostGIS**: Geospatial extension for PostgreSQL
+- **Backend Service**: Node.js application for managing gas station data
+- **Frontend Service**: Vue.js application for user interface
+URL: [bimanu-docker](https://github.com/Philipp-Rudolph/bimanu-docker-wrapper.git)
 
 ## 🔧 Configuration
 
@@ -248,25 +228,6 @@ The service leverages PostGIS for efficient geospatial operations:
 - **ST_DWithin**: Find points within a specified distance
 - **ST_MakePoint**: Create geometry points from coordinates
 - **Geography casting**: For accurate distance calculations
-
-## 🚀 Deployment
-
-### Production Docker Build
-
-```bash
-# Build production image
-docker build -f Dockerfile.prod -t bimanu-backend:latest .
-
-# Run production container
-docker run -p 3000:3000 bimanu-backend:latest
-```
-
-### Environment Setup
-
-1. Set up PostgreSQL with PostGIS extension
-2. Configure environment variables
-3. Ensure network connectivity to external data source
-4. Set up monitoring and logging (optional)
 
 ---
 
