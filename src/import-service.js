@@ -104,7 +104,6 @@ function transformFeatures(data) {
       logger.info(`Feature ${index}:`, JSON.stringify(feature, null, 2));
     }
     
-    // Koordinaten aus geometry.x und geometry.y extrahieren
     const longitude = feature.geometry?.x;
     const latitude = feature.geometry?.y;
 
