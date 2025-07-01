@@ -1,3 +1,10 @@
+/**
+ * PostGIS query to find gas stations within a specified distance from a given latitude and longitude.
+ * @param {number} latitude - The latitude of the point to search from.
+ * @param {number} longitude - The longitude of the point to search from.
+ * @param {number} distance - The distance in kilometers to search within.
+ * @returns {string} - The SQL query string.
+ */
 const postgisQuery = `
   SELECT 
     id,

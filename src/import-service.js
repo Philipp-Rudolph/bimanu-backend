@@ -13,6 +13,11 @@ if (CONFIG.SSL_DISABLED) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 }
 
+/**
+ * Fetches gas station data from the configured URL and saves it to the database.
+ * @returns {Promise<{imported: number, skipped: number}>} - The result of the import operation.
+ * @throws {Error} - If there is an error during the fetch or database operations.
+ */
 async function fetchData() {
   const response = await fetch(CONFIG.DATA_URL);
   if (!response.ok) {
@@ -21,6 +26,11 @@ async function fetchData() {
   return await response.json();
 }
 
+/**
+ * Saves the given features to the database.
+ * @param {Array} features - The array of features to save.
+ * @returns {Promise<{imported: number, skipped: number}>} - The result of the save operation.
+ */
 async function saveFeaturesToDatabase(features) {
   const client = await pool.connect();
   try {
@@ -76,6 +86,11 @@ async function saveFeaturesToDatabase(features) {
   }
 }
 
+/**
+ * Transforms the raw feature data into a format suitable for database import.
+ * @param {*} data - The raw data from the API.
+ * @returns {Array} - The transformed array of features.
+ */
 function transformFeatures(data) {
   if (!data.features || !Array.isArray(data.features)) {
     throw new Error('Invalid data format: features array not found');
@@ -89,7 +104,7 @@ function transformFeatures(data) {
       logger.info(`Feature ${index}:`, JSON.stringify(feature, null, 2));
     }
     
-    // Koordinaten aus geometry.x und geometry.y extrahieren (NICHT feature.longitude/latitude)
+    // Koordinaten aus geometry.x und geometry.y extrahieren
     const longitude = feature.geometry?.x;
     const latitude = feature.geometry?.y;
 
@@ -121,6 +136,11 @@ function transformFeatures(data) {
   });
 }
 
+/**
+ * Validates the database connection and checks for the existence of the gas_stations table.
+ * @returns {Promise<void>} - Resolves if validation is successful, rejects if not.
+ * @throws {Error} - If the database connection fails or the table does not exist.
+ */
 async function validateDatabaseConnection() {
   try {
     const client = await pool.connect();
@@ -147,6 +167,13 @@ async function validateDatabaseConnection() {
   }
 }
 
+/**
+ * Imports gas station data from the configured API into the database.
+ * This function orchestrates the entire import process, including fetching data,
+ * transforming it, and saving it to the database.
+ * @returns {Promise<void>} - Resolves if the import is successful, rejects if not.
+ * @throws {Error} - If there is an error during the import process.
+ */
 async function importGasStations() {
   try {
     logger.info('Starting gas station import...');
